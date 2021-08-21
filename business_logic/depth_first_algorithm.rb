@@ -4,23 +4,21 @@ require_relative '../model/rect'
 
 
 
-# @param [Integer] grid_length number of cols and rows in the maze.
 # @param [Hash] state Stores presenter state
-def setup_depth_first_algorithm_state(grid_length, state)
-  state[:visited] = create_value_grid(grid_length, false)
+def setup_depth_first_algorithm_state(state)
   state[:cell_stack] = []
   state[:generation_complete] = false
   state[:step_through_maze_generation]
 end
-  
+
 # Runs an iteration of the algorithm.
 # @param [Array] grid A n x n grid of cells for the maze
 # @param [Hash] state Stores the state of the algorithm.
 def step_through_depth_first_maze_generator(grid, state)
   state[:current] = grid[0][0] if state[:current].nil?
   current_cell = state[:current]
-  state[:visited][current_cell.grid_y][current_cell.grid_x] = true
-  next_cell = not_visited_cell_neighbour(grid, state[:visited], current_cell)
+  current_cell.show_base_background = true
+  next_cell = not_visited_cell_neighbour(grid, current_cell)
   if next_cell
     state[:cell_stack].push(current_cell)
     remove_walls_between_cells(current_cell, next_cell)
@@ -70,20 +68,19 @@ end
 
 
 # @param [Array] grid A n x n array of cells.
-# @param [Array] visited_array A n x n array of bool representing which cells the algorithm has visited.
 # @param [Cell] cell Cell whose neighbours need to be checked
 # @return [Cell] A random neighbour that has not been visited. Nil if all neighbours are visited.
-def not_visited_cell_neighbour(grid, visited_array, cell)
+def not_visited_cell_neighbour(grid, cell)
   neighbours = []
   top = cell.grid_y.positive? ? grid[cell.grid_y - 1][cell.grid_x] : nil
   right = cell.grid_x < grid[cell.grid_y].length - 1 ? grid[cell.grid_y][cell.grid_x + 1] : nil
   bottom = cell.grid_y < grid.length - 1 ? grid[cell.grid_y + 1][cell.grid_x] : nil
   left = cell.grid_x.positive? ? grid[cell.grid_y][cell.grid_x - 1] : nil
 
-  neighbours.push(top) if top && !visited_array[top.grid_y][top.grid_x]
-  neighbours.push(right) if right && !visited_array[right.grid_y][right.grid_x]
-  neighbours.push(bottom) if bottom && !visited_array[bottom.grid_y][bottom.grid_x]
-  neighbours.push(left) if left && !visited_array[left.grid_y][left.grid_x]
+  neighbours.push(top) if top && !top.show_base_background
+  neighbours.push(right) if right && !right.show_base_background
+  neighbours.push(bottom) if bottom && !bottom.show_base_background
+  neighbours.push(left) if left && !left.show_base_background
 
   return neighbours.empty? ? nil : neighbours[rand(neighbours.length)]
 end

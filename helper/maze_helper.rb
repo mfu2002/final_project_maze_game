@@ -12,8 +12,10 @@ def draw_cell(window, cell, is_player, grid_length)
   cell_draw_y = cell.grid_y * cell_width
 
 
+  window.draw_rect(cell_draw_x, cell_draw_y, cell_width, cell_width, Gosu::Color.argb(DARK_GRAY_COLOR)) if cell.show_base_background
+
   if cell.grid_y == grid_length - 1 && cell.grid_x == grid_length - 1
-    window.draw_rect(cell_draw_x, cell_draw_x, cell_width, cell_width, Gosu::Color.argb(LIGHT_GREEN_COLOR))
+    window.draw_rect(cell_draw_x, cell_draw_y, cell_width, cell_width, Gosu::Color.argb(LIGHT_GREEN_COLOR))
   end
 
   if is_player
@@ -40,23 +42,6 @@ def draw_cell_walls(window, cell, cell_width, wall_thickness, wall_color)
   window.draw_rect(cell_draw_x, cell_draw_y + cell_width, cell_width, wall_thickness, wall_color) if cell.bottom_wall
   window.draw_rect(cell_draw_x, cell_draw_y, wall_thickness, cell_width, wall_color) if cell.left_wall
 end
-
-
-# @param [Integer] grid_length Number of rows and cols in the grid
-# @param [Object] value value to fill the grid with.
-# @return [Array] An array of grid_length x grid_length that contains the value at each position.
-def create_value_grid(grid_length, value)
-  grid = []
-  (0..grid_length - 1).each do
-    grid_row = []
-    (0..grid_length - 1).each do
-      grid_row.push(value)
-    end
-    grid.push(grid_row)
-  end
-  return grid
-end
-
 
 # Moves the player up a cell if possible.
 # @param [Array] grid An n x n Array of cell (maze)

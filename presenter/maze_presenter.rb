@@ -117,7 +117,7 @@ def reset_grid(state)
   state[:algorithm_state].clear
   case state[:algorithm]
   when MazeAlgorithm::DEPTH_FIRST
-    setup_depth_first_algorithm_state(state[:current_grid_length], state[:algorithm_state])
+    setup_depth_first_algorithm_state(state[:algorithm_state])
   when MazeAlgorithm::ITERATIVE_DIVISION
     setup_iterative_division_algorithm_state(state[:current_grid_length], state[:algorithm_state])
   end

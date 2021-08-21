@@ -81,12 +81,26 @@ end
 # @param [ChamberInfo] chamber_info Chamber that needs to be divided
 # @return [Array] An array of two Chambers (that were sliced from the original chamber) with their walls built
 def divide(grid, chamber_info)
-  return if chamber_info.width <= 1 || chamber_info.height <= 1
+  if chamber_info.width <= 1 || chamber_info.height <= 1
+    set_chamber_done(grid, chamber_info)
+    return
+  end
 
   orientation = choose_orientation(chamber_info.width, chamber_info.height)
 
   return orientation == Orientation::HORIZONTAL ? divide_horizontally(grid, chamber_info) : divide_vertically(grid, chamber_info)
 
+end
+
+# visually indicates the chamber done constructing.
+# @param [Array] grid A 2D Array of the maze
+# @param [ChamberInfo] chamber Chamber that is done.
+def set_chamber_done(grid, chamber)
+  (0..chamber.height - 1).each do |j|
+    (0..chamber.width - 1).each do |i|
+      grid[chamber.grid_y + j][chamber.grid_x + i].show_base_background = true
+    end
+  end
 end
 
 # @param [Array] grid - 2D array of populated cells
