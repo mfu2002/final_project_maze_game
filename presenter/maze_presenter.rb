@@ -18,6 +18,8 @@ def setup_maze_presenter(algorithm, state)
   state[:footsteps] = []
   state[:level_record] = []
   state[:algorithm_state] = {}
+  state[:pop_sound] = Gosu::Sample.new('assets/music/pop.ogg')
+  state[:warning_sound] = Gosu::Sample.new('assets/music/warning.ogg')
 end
 
 
@@ -75,30 +77,46 @@ def update_maze_presenter(window, state)
 
   grid = state[:grid]
   player = state[:player]
+
+  step_through_maze_generator(grid, state)
+
+  state[:game_state] = GameState::GAME_STARTED if state[:algorithm_state][:generation_complete]
+
+  update_remaining_time(window, state)
+
+  last_row = grid[grid.length - 1]
+  last_cell = last_row[last_row.length - 1]
+  level_maze_up(window, state) if player == last_cell
+end
+
+# decrements the countdown while playing a warning music if the remaining time is below 10seconds.
+# Game will be set to game over if the timer reaches zero.
+# @param [GameWindow] window Gosu window that called the update
+# @param [Hash] state State of the presenter.
+def update_remaining_time(window, state)
+  state[:remaining_time] -= window.update_interval / 1000 if state[:game_state] == GameState::GAME_STARTED
   remaining_time = state[:remaining_time]
-  footsteps = state[:footsteps]
+  return if remaining_time > 10
+
+  state[:warning_sound].play if (Gosu.milliseconds / 100 % 10).zero?
+  return if remaining_time.positive?
+
   level_record = state[:level_record]
+  level_record.push([state[:grid], state[:footsteps]])
+  navigate_to(window, Presenter::GAME_OVER_PRESENTER, { player_level_record: level_record, win: false })
 
+end
 
+# chooses the appropriate algorithm and steps through it.
+# @param [Array] grid A 2D array depicting the maze
+# @param [Hash] state State of the presenter.
+def step_through_maze_generator(grid, state)
   case state[:algorithm]
   when MazeAlgorithm::DEPTH_FIRST
     step_through_depth_first_maze_generator(grid, state[:algorithm_state])
   when MazeAlgorithm::ITERATIVE_DIVISION
     step_through_iterative_division_maze_generator(grid, state[:algorithm_state])
   end
-
-
-  state[:game_state] = GameState::GAME_STARTED if state[:algorithm_state][:generation_complete]
-
-  state[:remaining_time] -= window.update_interval / 1000 if state[:game_state] == GameState::GAME_STARTED
-  if remaining_time <= 0
-    level_record.push([grid, footsteps])
-    navigate_to(window, Presenter::GAME_OVER_PRESENTER, {player_level_record: level_record, win: false})
-  end
-
-  last_row = grid[grid.length - 1]
-  last_cell = last_row[last_row.length - 1]
-  level_maze_up(window, state) if player == last_cell
 end
 
 # @param [GameWindow] window Gosu window that is being viewed on the screen.
@@ -165,6 +183,7 @@ def move_maze_player(direction, grid, player, state)
   end
   return if next_tile.nil?
 
+  state[:pop_sound].play
   state[:player] = next_tile
   state[:footsteps].push(direction)
 end

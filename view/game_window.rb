@@ -73,4 +73,4 @@ class GameWindow < Gosu::Window
 
 end
 
-GameWindow.new(WINDOW_LENGTH, WINDOW_LENGTH).show()
+GameWindow.new(WINDOW_LENGTH, WINDOW_LENGTH).show

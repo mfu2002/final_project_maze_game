@@ -15,7 +15,11 @@ def draw_cell(window, cell, is_player, grid_length)
   window.draw_rect(cell_draw_x, cell_draw_y, cell_width, cell_width, Gosu::Color.argb(DARK_GRAY_COLOR)) if cell.show_base_background
 
   if cell.grid_y == grid_length - 1 && cell.grid_x == grid_length - 1
-    window.draw_rect(cell_draw_x, cell_draw_y, cell_width, cell_width, Gosu::Color.argb(LIGHT_GREEN_COLOR))
+    window.draw_rect(cell_draw_x + PLATFORM_MARGIN,
+                     cell_draw_y + PLATFORM_MARGIN,
+                     cell_width - + PLATFORM_MARGIN * 2,
+                     cell_width - PLATFORM_MARGIN * 2,
+                     Gosu::Color.argb(LIGHT_GREEN_COLOR))
   end
 
   if is_player
@@ -37,10 +41,10 @@ def draw_cell_walls(window, cell, cell_width, wall_thickness, wall_color)
   cell_draw_x = cell.grid_x * cell_width
   cell_draw_y = cell.grid_y * cell_width
 
-  window.draw_rect(cell_draw_x, cell_draw_y, cell_width, wall_thickness, wall_color) if cell.top_wall
-  window.draw_rect(cell_draw_x + cell_width, cell_draw_y, wall_thickness, cell_width, wall_color) if cell.right_wall
-  window.draw_rect(cell_draw_x, cell_draw_y + cell_width, cell_width, wall_thickness, wall_color) if cell.bottom_wall
-  window.draw_rect(cell_draw_x, cell_draw_y, wall_thickness, cell_width, wall_color) if cell.left_wall
+  window.draw_rect(cell_draw_x, cell_draw_y - wall_thickness / 2, cell_width, wall_thickness, wall_color) if cell.top_wall
+  window.draw_rect(cell_draw_x + cell_width - wall_thickness / 2, cell_draw_y, wall_thickness, cell_width, wall_color) if cell.right_wall
+  window.draw_rect(cell_draw_x, cell_draw_y + cell_width - wall_thickness / 2, cell_width, wall_thickness, wall_color) if cell.bottom_wall
+  window.draw_rect(cell_draw_x - wall_thickness / 2, cell_draw_y, wall_thickness, cell_width, wall_color) if cell.left_wall
 end
 
 # Moves the player up a cell if possible.

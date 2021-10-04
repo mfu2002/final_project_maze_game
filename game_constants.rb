@@ -14,6 +14,7 @@ INITIAL_MAZE_GRID_LENGTH = 10 # Cells
 MAZE_GRID_INCREMENT_SIZE = 5 # Cells
 MAZE_WALL_THICKNESS = 1 # pixels
 PLAYER_MARGIN = 5 # Pixels
+PLATFORM_MARGIN = 2 # Pixels
 VISIBLE_ZONE = 2 # Cells
 
 # Miscellaneous
